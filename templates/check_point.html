@@ -1,0 +1,19 @@
+<!-- check_point.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Points</title>
+</head>
+<body>
+    <h1>Check Points</h1>
+    <form method="POST" action="{% url 'check_point' %}">
+        {% csrf_token %}
+        <label for="staff_number">Staff Number:</label>
+        <input type="text" id="staff_number" name="staff_number" required>
+        <button type="submit">Check</button>
+    </form>
+    {% if point is not None %}
+        <h2>Total Points: {{ point }}</h2>
+    {% endif %}
+</body>
+</html>
