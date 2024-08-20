@@ -1,0 +1,219 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">   
+    <style>
+        .card {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
+        .input-group button {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .input-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .preferences-container {
+            margin-top: 20px;
+        }
+
+        .preferences-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .preferences-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#staff_number").on('input', function() {
+                var staff_number = $(this).val();
+                if (staff_number) {
+                    $.ajax({
+                        url: "{% url 'get_buildings' %}",
+                        data: {
+                            'staff_number': staff_number
+                        },
+                        success: function(data) {
+                            var preferences = data.preferences;
+                            var container = $("#preferences-container");
+                            container.empty();  // Clear existing input fields
+                            var preferenceCount = 0;
+        
+                            if (preferences.length > 0) {
+                                container.append('<label for="preferences">Preferences (available rooms: ' + preferences.join(', ') + '):</label>');
+                                preferences.forEach(function(pref, index) {
+                                    container.append('<input type="text" class="preference-input" name="preference_' + preferenceCount + '" placeholder="Enter preference ' + (preferenceCount + 1) + '">');
+                                    preferenceCount++;
+                                });
+        
+                                $("#preference_count").val(preferenceCount);  // Update preference count
+                            } else {
+                                container.append('<p>No buildings available</p>');
+                                $("#preference_count").val(0);
+                            }
+                        }
+                    });
+                } else {
+                    $("#preferences-container").empty();
+                    $("#preference_count").val(0);
+                }
+            });
+        });
+        
+    </script>
+    <div class="main-content">
+        <div class="card">
+            <h2>APPLICATION FORMS</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+                <!-- Other form fields -->
+    
+                <div class="input-group">
+                    <label for="name">NAME</label>
+                    <input type="text" id="name" name="name" placeholder="Please enter your name" required>
+                </div>
+                <div class="input-group">
+                    <label for="staff_number">STAFF NUMBER</label>
+                    <input type="text" id="staff_number" name="staff_number" value="{{ request.POST.staff_number }}" required>
+                </div>
+                <div class="input-group">
+                    <label for="department">DEPARTMENT</label>
+                    <input type="text" id="department" name="department" placeholder="Please enter your department" required>
+                </div>
+                <div class="input-group">
+                    <label for="mobile_number">MOBILE NUMBER</label>
+                    <input type="number" id="mobile_number" name="mobile_number" placeholder="Please enter your mobile number" required>
+                </div>
+                <div class="input-group">
+                    <label for="uni_appointment">DATE OF UNIVERSITY APPOINTMENT</label>
+                    <input type="date" id="uni_appointment" name="uni_appointment" required>
+                </div>
+                <div class="input-group">
+                    <label for="bungalow_no">PRESENT UNIVERSITY BUNGALOW/FLAT NUMBER (if any)</label>
+                    <input type="text" id="bungalow_no" name="bungalow_no" placeholder="Please enter your present university bungalow or flat number">
+                </div>
+                <div class="input-group">
+                    <label for="present_accomodation">DATE OF OCCUPATION OF PRESENT UNIVERSITY ACCOMMODATION</label>
+                    <input type="date" id="present_accomodation" name="present_accomodation">
+                </div>
+                <div class="input-group">
+                    <label for="status_point">YOUR CURRENT STATUS</label>
+                    <input type="text" id="status_point" name="status_point" placeholder="Please enter your current status e.g., Professor" required>
+                </div>
+                <div class="input-group">
+                    <label for="study_leaveFrom">DATE OF PROCEEDING ON STUDY LEAVE FROM:</label>
+                    <input type="date" id="study_leaveFrom" name="study_leaveFrom">
+                    <label for="study_leaveTo">DATE OF PROCEEDING ON STUDY LEAVE TO:</label>
+                    <input type="date" id="study_leaveTo" name="study_leaveTo">
+                </div>
+                <div class="">
+                    <label for="marital_status">MARITAL STATUS:</label><br>
+                    <input type="radio" id="married" name="marital_status" value="married">
+                    <label for="married">Married</label>
+            
+                    <input type="radio" id="single" name="marital_status" value="single">
+                    <label for="single">Single</label>
+            
+                    <input type="radio" id="none" name="marital_status" value="none">
+                    <label for="none">None</label>
+                </div><br>
+                <div class="input-group">
+                    <label for="num_of_children">NUMBER OF CHILDREN</label>
+                    <input type="number" id="num_of_children" name="num_of_children" placeholder="Please enter number of children" required>
+                </div>
+                <div class="">
+                    <label for="duty_status">DUTY STATUS:</label><br>
+                    <input type="radio" id="provert" name="duty_status" value="provert">
+                    <label for="provert">Provert</label>
+            
+                    <input type="radio" id="deans" name="duty_status" value="deans">
+                    <label for="deans">Deans</label>
+            
+                    <input type="radio" id="head_of_department" name="duty_status" value="head of department">
+                    <label for="head_of_department">Head of Department</label>
+                </div><br>
+                <div class="input-group">
+                    <label for="date_of_duty">DATE OF SPECIAL DUTY e.g., dean</label>
+                    <input type="date" id="date_of_duty" name="date_of_duty">
+                </div>
+
+                <!-- Preferences Section -->
+                <input type="hidden" id="preference_count" name="preference_count" value="0">
+    <div class="preferences-container" id="preferences-container">
+        <!-- Dynamic preference fields will be inserted here -->
+    </div>
+
+                <!-- New Section: Present Accommodation -->
+                <div class="accommodation">
+                    <label>PRESENT ACCOMMODATION:</label><br>
+                    <input type="radio" id="off_campus" name="present_accommodation_name" value="off_campus">
+                    <label for="off_campus">Off Campus</label><br>
+            
+                    <input type="radio" id="on_campus" name="present_accommodation_name" value="on_campus">
+                    <label for="on_campus">On Campus</label><br>
+            
+                    <input type="radio" id="temporary_accommodation" name="present_accommodation_name" value="temporary_accommodation">
+                    <label for="temporary_accommodation">Temporary Accommodation</label><br>
+                    
+                    <input type="radio" id="not_accommodated" name="present_accommodation_name" value="not_accommodated">
+                    <label for="not_accommodated">Not Accommodated</label>
+                </div>
+
+                <div class="input-group">
+                    <button type="submit">SUBMIT</button>
+                </div>
+            </form>
+            <a href="{% url 'check_point' %}"><button>Check Point</button></a>
+        </div>
+    </div>
+</body>
+</html>
