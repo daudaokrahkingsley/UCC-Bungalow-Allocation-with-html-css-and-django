@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View All Preferences Grouped</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        td {
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <h2>All Preferences Grouped by Staff</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Staff Number</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Preferences</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff_number, details in preferences_dict.items %}
+                <tr>
+                    <td rowspan="{{ details.preferences|length }}">{{ staff_number }}</td>
+                    <td rowspan="{{ details.preferences|length }}">{{ details.name }}</td>
+                    <td rowspan="{{ details.preferences|length }}">{{ details.department }}</td>
+                    <td>{{ details.preferences|first }}</td>
+                </tr>
+                {% for pref in details.preferences|slice:":-1" %}
+                    <tr>
+                        <td>{{ pref }}</td>
+                    </tr>
+                {% endfor %}
+            {% empty %}
+                <tr>
+                    <td colspan="4">No preferences available</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

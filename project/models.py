@@ -1,6 +1,19 @@
 from django.db import models
 from datetime import date  
 
+class Building(models.Model):
+    CATEGORY_CHOICES = [
+        ('senior_member', 'Senior Member'),
+        ('senior_staff', 'Senior Staff'),
+        ('junior_staff', 'Junior Staff'),
+    ]
+    
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    vacant_rooms = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.name} ({self.category}) - {self.vacant_rooms} rooms available"
 class Appointment(models.Model):
     name = models.CharField(max_length=100)
     staff_number = models.CharField(max_length=100)
@@ -28,19 +41,19 @@ class Appointment(models.Model):
     date_of_duty = models.DateField(null=True, blank=True)
     present_accommodation = models.CharField(max_length=50, choices=[('off_campus', 'Off Campus'), ('on_campus', 'On Campus'), ('temporary_accommodation', 'Temporary Accommodation'), ('not_accommodated', 'Not Accommodated')],default='Not Accomodated')
 
+    def get_category(self):
+        if self.staff_number.startswith('sm'):
+            return 'senior_member'
+        elif self.staff_number.startswith('ss'):
+            return 'senior_staff'
+        elif self.staff_number.startswith('js'):
+            return 'junior_staff'
+        return 'unknown'
     def __str__(self):
         return self.name
 class Preference(models.Model):
     application = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name='preferences')
-    preference_a = models.CharField(max_length=255, blank=True, null=True)
-    preference_b = models.CharField(max_length=255, blank=True, null=True)
-    preference_c = models.CharField(max_length=255, blank=True, null=True)
-    preference_d = models.CharField(max_length=255, blank=True, null=True)
-    preference_e = models.CharField(max_length=255, blank=True, null=True)
-    preference_f = models.CharField(max_length=255, blank=True, null=True)
-    preference_g = models.CharField(max_length=255, blank=True, null=True)
-    preference_h = models.CharField(max_length=255, blank=True, null=True)
-    preference_i = models.CharField(max_length=255, blank=True, null=True)
+    preference = models.CharField(max_length=255,default='ff1')
 
     def __str__(self):
         return f"Preferences for {self.application.name}"

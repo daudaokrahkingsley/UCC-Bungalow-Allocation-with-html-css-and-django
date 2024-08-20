@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Manage Buildings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h2 {
+            
+            color: black;
+            padding: 15px;
+            text-align: center;
+            margin: 0;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px;
+            /* Align form to the left */
+            margin-left: auto;
+            margin-right: auto;
+            /* Center the form horizontally */
+            display: block;
+        }
+        form div {
+            margin-bottom: 15px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        form input, form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-button {
+            background-color: #dc3545;
+            border: none;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .remove-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Manage Buildings</h2>
+    <form action="{% url 'manage_buildings' %}" method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="name">Building Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="category">Building Category</label>
+            <select id="category" name="category" required>
+                <option value="senior_member">Senior Member</option>
+                <option value="senior_staff">Senior Staff</option>
+                <option value="junior_staff">Junior Staff</option>
+            </select>
+        </div>
+        <div>
+            <label for="vacant_rooms">Number of Vacant Rooms</label>
+            <input type="number" id="vacant_rooms" name="vacant_rooms" required>
+        </div>
+        <button type="submit">Add Building</button>
+    </form>
+
+    <h3>Existing Buildings</h3>
+    <ul>
+        {% for building in buildings %}
+            <li>
+                {{ building.name }} - {{ building.category }} - {{ building.vacant_rooms }} rooms available
+                <a href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this building?')) document.getElementById('delete-form-{{ building.id }}').submit();">
+                    <button type="button" class="remove-button">Remove</button>
+                </a>
+                <form id="delete-form-{{ building.id }}" action="{% url 'delete_building' building.id %}" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

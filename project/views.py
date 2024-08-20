@@ -1,8 +1,31 @@
 from django.shortcuts import render,redirect
-from .models import Appointment,status_point,Preference
+from .models import Appointment,status_point,Preference,Building
 from django.contrib import messages
-# Create your views here.
+from django.http import JsonResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from datetime import datetime, timedelta
+
+def admin_manage_buildings(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        category = request.POST.get('category')
+        vacant_rooms = request.POST.get('vacant_rooms')
+
+        if name and category and vacant_rooms:
+            Building.objects.create(
+                name=name,
+                category=category,
+                vacant_rooms=int(vacant_rooms)
+            )
+            messages.success(request, 'Building added successfully')
+            return redirect('manage_buildings')
+        else:
+            messages.error(request, 'Please provide all required fields')
+
+    buildings = Building.objects.all()
+    return render(request, 'admin_manage.html', {'buildings': buildings})
+
 
 def calculate_accommodation_points(present_accommodation, present_accommodation_date):
     print(f"Present Accommodation: {present_accommodation}")
@@ -104,38 +127,72 @@ def calculate_status_points(initial_point, dateOf_Uni_Appointment, study_leaveFr
     
     except ValueError:
         raise ValueError('Invalid date format. Please use YYYY-MM-DD.')
+def delete_building(request, building_id):
+    if request.method == 'POST':
+        building = get_object_or_404(Building, id=building_id)
+        building.delete()
+        return redirect(reverse('manage_buildings'))
+    return redirect(reverse('manage_buildings'))
+
+def get_buildings(request):
+    staff_number = request.GET.get('staff_number')
+    category = ''
+
+    # Determine the category based on the staff number prefix
+    if staff_number.startswith('sm'):
+        category = 'senior_member'
+    elif staff_number.startswith('ss'):
+        category = 'senior_staff'
+    elif staff_number.startswith('js'):
+        category = 'junior_staff'
+
+    # Fetch buildings based on the determined category
+    available_buildings = Building.objects.filter(category=category, vacant_rooms__gt=0)
+    building_names = [building.name for building in available_buildings]
+
+    # Return the building names as a JSON response
+    return JsonResponse({'preferences': building_names})
+
+def view_all_preferences(request):
+    applications = Appointment.objects.all()
+    preferences = Preference.objects.select_related('application').all()
+
+    # Create a dictionary to group preferences by staff number
+    preferences_dict = {}
+    for pref in preferences:
+        staff_number = pref.application.staff_number
+        if staff_number not in preferences_dict:
+            preferences_dict[staff_number] = {
+                'name': pref.application.name,
+                'department': pref.application.department,
+                'preferences': []
+            }
+        preferences_dict[staff_number]['preferences'].append(pref.preference)
+    
+    return render(request, 'view_preferences.html', {
+        'applications': applications,
+        'preferences_dict': preferences_dict
+    })
 
 
 def index(request):
     if request.method == 'POST':
-        name = request.POST['name']
-        staff_number = request.POST['staff_number']
-        department = request.POST['department']
-        mobile_number = request.POST['mobile_number']
-        uni_appointment = request.POST['uni_appointment']
+        name = request.POST.get('name')
+        staff_number = request.POST.get('staff_number')
+        department = request.POST.get('department')
+        mobile_number = request.POST.get('mobile_number')
+        uni_appointment = request.POST.get('uni_appointment')
         bungalow_no = request.POST.get('bungalow_no', '')
-        present_accomodation = request.POST.get('present_accomodation', None)
-        present_accomodation_name = request.POST.get('present_accommodation_name')
-        status_points = request.POST['status_point']
+        present_accommodation = request.POST.get('present_accommodation', None)
+        present_accommodation_name = request.POST.get('present_accommodation_name')
+        status_points = request.POST.get('status_point')
         study_leaveFrom = request.POST.get('study_leaveFrom', None)
         study_leaveTo = request.POST.get('study_leaveTo', None)
-        marital_status = request.POST.get('marital_status', None)  # Get the single value
-        duty_status = request.POST.get('duty_status', None)  # Get the single value
-        num_of_children = request.POST['num_of_children']
+        marital_status = request.POST.get('marital_status', None)
+        duty_status = request.POST.get('duty_status', None)
+        num_of_children = request.POST.get('num_of_children', 0)
         date_of_duty = request.POST.get('date_of_duty', None)
 
-        # Validate and handle empty strings
-        print(present_accomodation)
-        if marital_status:
-            print(marital_status)
-        else:
-            print("No marital status provided")
-        
-        if duty_status:
-            print(duty_status)
-        else:
-            print("No duty status provided")
-        
         try:
             status = status_point.objects.get(status_name=status_points)
         except status_point.DoesNotExist:
@@ -146,7 +203,6 @@ def index(request):
             messages.error(request, 'Staff number already used in application')
             return render(request, 'index.html')
 
-        # Create the Appointment object with mandatory fields
         user = Appointment(
             name=name,
             staff_number=staff_number,
@@ -157,50 +213,51 @@ def index(request):
             initial_point=status.point,
             marital_status=marital_status,
             num_of_children=num_of_children,
-
         )
-       
 
-        # Add optional fields if provided
         if study_leaveFrom:
             user.studyLeave_from = study_leaveFrom
         if study_leaveTo:
             user.studyLeave_to = study_leaveTo
         if date_of_duty:
             user.date_of_duty = date_of_duty
-        if present_accomodation:
-            user.date_of_occupation_ofAccomodation = present_accomodation
-        if present_accomodation_name:
-            user.present_accommodation = present_accomodation_name
+        if present_accommodation:
+            user.date_of_occupation_ofAccomodation = present_accommodation
+        if present_accommodation_name:
+            user.present_accommodation = present_accommodation_name
         if duty_status:
-            user.duty_status=duty_status
+            user.duty_status = duty_status
+
+        user.save() 
+        staff_number = request.POST.get('staff_number')
+        preference_count = int(request.POST.get('preference_count', 0))
+
+        print(f"Staff Number: {staff_number}")
+        print(f"Preference Count: {preference_count}")
 
         try:
-            user.save()
-             # Create Preference object
-            Preference.objects.create(
-                application=user,
-                preference_a=request.POST.get('preference_a', ''),
-                preference_b=request.POST.get('preference_b', ''),
-                preference_c=request.POST.get('preference_c', ''),
-                preference_d=request.POST.get('preference_d', ''),
-                preference_e=request.POST.get('preference_e', ''),
-                preference_f=request.POST.get('preference_f', ''),
-                preference_g=request.POST.get('preference_g', ''),
-                preference_h=request.POST.get('preference_h', ''),
-                preference_i=request.POST.get('preference_i', '')
-            )
-            messages.success(request, 'Data saved successfully')
-            return redirect('index')
-        except Exception as e:
-            messages.error(request, f"Error saving data: {e}")
-            return redirect('index')
+            appointment = Appointment.objects.get(staff_number=staff_number)
+        except Appointment.DoesNotExist:
+            print("Appointment not found")
+            return render(request, 'index.html', {'error': 'Appointment not found'})
+
+        # Clear previous preferences for the same appointment
+        Preference.objects.filter(application=appointment).delete()
+
+        # Save preferences
+        preferences_saved = 0
+        for i in range(preference_count):
+            preference_text = request.POST.get(f'preference_{i}')
+            print(f"Preference {i}: {preference_text}")  # Debugging output
+            if preference_text:
+                Preference.objects.create(application=appointment, preference=preference_text)
+                preferences_saved += 1
         
-    
+        print(f"Total Preferences Saved: {preferences_saved}")
+
+        # Redirect or render success page
+        return redirect('check_point')
     return render(request, 'index.html')
-
-
-
 
 
 
