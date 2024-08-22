@@ -1,128 +1,178 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Form</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">   
-<<<<<<< HEAD
+    <title>UCC Apartment Selection Form</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for better styling */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #007bff;
+        }
+        .nav-pills .nav-link {
+            color: #007bff;
+            border-radius: 50px;
+            margin: 5px;
+        }
+        .nav-pills {
+            justify-content: center;
+        }
+        .tab-content {
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+    </style>
 </head>
-<style>
-    .card {
-        background: #fff;
-        padding: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-    
-    .input-group {
-        margin-bottom: 15px;
-    }
-    
-    .input-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-    
-    .input-group input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-    
-    .input-group button {
-        width: 100%;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    
-    .input-group button:hover {
-        background-color: #0056b3;
-    }
-
-    .preferences, .accommodation {
-        margin-top: 20px;
-    }
-
-    .preferences label, .accommodation label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .preferences input, .accommodation input {
-        width: 48%;
-        padding: 10px;
-        margin-right: 2%;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-
-    .preferences input:last-child {
-        margin-right: 0;
-    }
-</style> 
 <body>
-        <div class="main-content">
-            <div class="card">
-                <h2>APPLICATION FORMS</h2>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    {% for message in messages %}
-                    <p>{{ message }}</p>
-                    {% endfor %}
-                    <!-- Other form fields -->
-    
-                    <div class="input-group">
-                        <label for="name">NAME</label>
-                        <input type="text" id="name" name="name" placeholder="Please enter your name" required>
+    <div class="container mt-5">
+        <!-- Navigation Sections -->
+        <ul class="nav nav-pills mb-4" id="form-sections">
+            <li class="nav-item">
+                <a class="nav-link active" id="welcome-tab" data-toggle="pill" href="#welcome">Welcome</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="personal-info-tab" data-toggle="pill" href="#personal-info">Personal Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="university-info-tab" data-toggle="pill" href="#university-info">University Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="duty-info-tab" data-toggle="pill" href="#duty-info">Duty Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="marital-info-tab" data-toggle="pill" href="#marital-info">Marital Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="present-accommodation-tab" data-toggle="pill" href="#present-accommodation">Present Accommodation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="apartment-preferences-tab" data-toggle="pill" href="#apartment-preferences">Apartment Preferences</a>
+            </li>
+        </ul>
+
+        <!-- Form Sections (Single Form Tag) -->
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            
+            <div class="tab-content">
+                <!-- Welcome Section -->
+                <div class="tab-pane fade show active" id="welcome">
+                    <h3>Welcome to UCC Apartment Selection Forms</h3>
+                    <p>Please fill out the form diligently as it will be used to generate points for apartment allocation.</p>
+                    <button type="button" class="btn btn-primary next-section" data-next="personal-info-tab">Next</button>
+                </div>
+
+                <!-- Section 1: Personal Information -->
+                <div class="tab-pane fade" id="personal-info">
+                    <h3>Section 1: Personal Information</h3>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Please enter your name" required>
                     </div>
-                    <div class="input-group">
-                        <label for="staff_number">STAFF NUMBER</label>
-                        <input type="text" id="staff_number" name="staff_number" placeholder="Please enter your staff number" required>
+                    <div class="form-group">
+                        <label for="mobile_number">Mobile Number</label>
+                        <input type="number" id="mobile_number" name="mobile_number" class="form-control" placeholder="Please enter your mobile number" required>
                     </div>
-                    <div class="input-group">
-                        <label for="department">DEPARTMENT</label>
-                        <input type="text" id="department" name="department" placeholder="Please enter your department" required>
+                    <div class="form-group">
+                        <label for="num_of_children">Number of Children</label>
+                        <input type="number" id="num_of_children" name="num_of_children" class="form-control" placeholder="Please enter number of children" required>
                     </div>
-                    <div class="input-group">
-                        <label for="mobile_number">MOBILE NUMBER</label>
-                        <input type="number" id="mobile_number" name="mobile_number" placeholder="Please enter your mobile number" required>
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="welcome-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="university-info-tab">Next</button>
+                </div>
+
+                <!-- Section 2: University Information -->
+                <div class="tab-pane fade" id="university-info">
+                    <h3>Section 2: University Information</h3>
+                    <div class="form-group">
+                        <label for="staff_number">Staff Number</label>
+                        <input type="text" id="staff_number" name="staff_number" class="form-control" value="{{ request.POST.staff_number }}" required>
                     </div>
-                    <div class="input-group">
-                        <label for="uni_appointment">DATE OF UNIVERSITY APPOINTMENT</label>
-                        <input type="date" id="uni_appointment" name="uni_appointment" required>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <input type="text" id="department" name="department" class="form-control" placeholder="Please enter your department" required>
                     </div>
-                    <div class="input-group">
-                        <label for="bungalow_no">PRESENT UNIVERSITY BUNGALOW/FLAT NUMBER (if any)</label>
-                        <input type="text" id="bungalow_no" name="bungalow_no" placeholder="Please enter your present university bungalow or flat number">
+                    <div class="form-group">
+                        <label for="uni_appointment">Date of University Appointment</label>
+                        <input type="date" id="uni_appointment" name="uni_appointment" class="form-control" required>
                     </div>
-                    <div class="input-group">
-                        <label for="present_accomodation">DATE OF OCCUPATION OF PRESENT UNIVERSITY ACCOMMODATION</label>
-                        <input type="date" id="present_accomodation" name="present_accomodation">
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="personal-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="duty-info-tab">Next</button>
+                </div>
+
+                <!-- Section 3: Duty Information -->
+                <div class="tab-pane fade" id="duty-info">
+                    <h3>Section 3: Duty Information</h3>
+                    <div class="form-group">
+                        <label for="status_point">Your Current Status</label>
+                        <input type="text" id="status_point" name="status_point" class="form-control" placeholder="Please enter your current status e.g., Professor" required>
                     </div>
-                    <div class="input-group">
-                        <label for="status_point">YOUR CURRENT STATUS</label>
-                        <input type="text" id="status_point" name="status_point" placeholder="Please enter your current status e.g., Professor" required>
+                    <div class="form-group">
+                        <label for="study_leaveFrom">Date of Proceeding on Study Leave From:</label>
+                        <input type="date" id="study_leaveFrom" name="study_leaveFrom" class="form-control">
                     </div>
-                    <div class="input-group">
-                        <label for="study_leaveFrom">DATE OF PROCEEDING ON STUDY LEAVE FROM:</label>
-                        <input type="date" id="study_leaveFrom" name="study_leaveFrom">
-                        <label for="study_leaveTo">DATE OF PROCEEDING ON STUDY LEAVE TO:</label>
-                        <input type="date" id="study_leaveTo" name="study_leaveTo">
+                    <div class="form-group">
+                        <label for="study_leaveTo">Date of Proceeding on Study Leave To:</label>
+                        <input type="date" id="study_leaveTo" name="study_leaveTo" class="form-control">
                     </div>
-                    <div class="">
-                        <label for="marital_status">MARITAL STATUS:</label><br>
+                    <div class="form-group">
+                        <label for="duty_status">Duty Status:</label><br>
+                        <input type="radio" id="provert" name="duty_status" value="provert">
+                        <label for="provert">Provost</label>
+                        <input type="radio" id="deans" name="duty_status" value="deans">
+                        <label for="deans">Dean</label>
+                        <input type="radio" id="head_of_department" name="duty_status" value="head of department">
+                        <label for="head_of_department">Head of Department</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_duty">Date of Special Duty e.g., dean</label>
+                        <input type="date" id="date_of_duty" name="date_of_duty" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="university-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="marital-info-tab">Next</button>
+                </div>
+
+                <!-- Section 4: Marital Information -->
+                <div class="tab-pane fade" id="marital-info">
+                    <h3>Section 4: Marital Information</h3>
+                    <div class="form-group">
+                        <label for="marital_status">Marital Status</label><br>
                         <input type="radio" id="married" name="marital_status" value="married">
                         <label for="married">Married</label>
                 
@@ -131,277 +181,80 @@
                 
                         <input type="radio" id="none" name="marital_status" value="none">
                         <label for="none">None</label>
-                    </div><br>
-                    <div class="input-group">
-                        <label for="num_of_children">NUMBER OF CHILDREN</label>
-                        <input type="number" id="num_of_children" name="num_of_children" placeholder="Please enter number of children" required>
                     </div>
-                    <div class="">
-                        <label for="duty_status">DUTY STATUS:</label><br>
-                        <input type="radio" id="provert" name="duty_status" value="provert">
-                        <label for="provert">Provert</label>
-                
-                        <input type="radio" id="deans" name="duty_status" value="deans">
-                        <label for="deans">Deans</label>
-                
-                        <input type="radio" id="head_of_department" name="duty_status" value="head of department">
-                        <label for="head_of_department">Head of Department</label>
-                    </div><br>
-                    <div class="input-group">
-                        <label for="date_of_duty">DATE OF SPECIAL DUTY e.g., dean</label>
-                        <input type="date" id="date_of_duty" name="date_of_duty">
-                    </div>
-    
                     
-                    <div class="input-group">
-                        <label>Bungalow/Flat Applied for in Order of Preference:</label>
-                        <input type="text" name="preference_a" placeholder="a." required>
-                        <input type="text" name="preference_b" placeholder="b." required>
-                        <input type="text" name="preference_c" placeholder="c." required>
-                        <input type="text" name="preference_d" placeholder="d." required>
-                        <input type="text" name="preference_e" placeholder="e." required>
-                        <input type="text" name="preference_f" placeholder="f." required>
-                        <input type="text" name="preference_g" placeholder="g." required>
-                        <input type="text" name="preference_h" placeholder="h." required>
-                        <input type="text" name="preference_i" placeholder="i." required>
-                    </div>
-    
-                    <!-- New Section: Present Accommodation -->
-                    <div class="accommodation">
-                        <label>PRESENT ACCOMMODATION:</label><br>
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="duty-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="present-accommodation-tab">Next</button>
+                </div>
+
+                <!-- Section 5: Present Accommodation -->
+                <div class="tab-pane fade" id="present-accommodation">
+                    <h3>Section 5: Present Accommodation</h3>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="bungalow_no">Present University Bungalow/Flat Number (if any)</label>
+                            <input type="text" id="bungalow_no" name="bungalow_no" class="form-control" placeholder="Please enter your present university bungalow or flat number">
+                        </div>
+                        <div class="form-group">
+                            <label for="present_accomodation">Date of Occupation of Present University Accommodation</label>
+                            <input type="date" id="present_accomodation" name="present_accomodation" class="form-control">
+                        </div>
+                        <label>Present Accommodation:</label><br>
+
                         <input type="radio" id="off_campus" name="present_accommodation_name" value="off_campus">
-                        <label for="off_campus">Off Campus</label><br>
-                
-                        <input type="radio" id="on_campus" name="present_accommodation_name" value="on_campus">
-                        <label for="on_campus">On Campus</label><br>
-                
-                        <input type="radio" id="temporary_accommodation" name="present_accommodation_name" value="temporary_accommodation">
-                        <label for="temporary_accommodation">Temporary Accommodation</label><br>
+                        <label for="off_campus">Off-Campus</label>
                         
-                        <input type="radio" id="not_accommodated" name="present_accommodation_name" value="not_accommodated">
-                        <label for="not_accommodated">Not Accommodated</label>
-                    </div>
-    
-                    <div class="input-group">
-                        <button type="submit">SUBMIT</button>
-                    </div>
-                </form>
-                <a href="{% url 'check_point' %}"><button>Check Point</button></a>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-=======
-    <style>
-        .card {
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        
-        .input-group button {
-            width: 100%;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .input-group button:hover {
-            background-color: #0056b3;
-        }
-
-        .preferences-container {
-            margin-top: 20px;
-        }
-
-        .preferences-container label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .preferences-container input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-    </style>
-</head>
-<body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#staff_number").on('input', function() {
-                var staff_number = $(this).val();
-                if (staff_number) {
-                    $.ajax({
-                        url: "{% url 'get_buildings' %}",
-                        data: {
-                            'staff_number': staff_number
-                        },
-                        success: function(data) {
-                            var preferences = data.preferences;
-                            var container = $("#preferences-container");
-                            container.empty();  // Clear existing input fields
-                            var preferenceCount = 0;
-        
-                            if (preferences.length > 0) {
-                                container.append('<label for="preferences">Preferences (available rooms: ' + preferences.join(', ') + '):</label>');
-                                preferences.forEach(function(pref, index) {
-                                    container.append('<input type="text" class="preference-input" name="preference_' + preferenceCount + '" placeholder="Enter preference ' + (preferenceCount + 1) + '">');
-                                    preferenceCount++;
-                                });
-        
-                                $("#preference_count").val(preferenceCount);  // Update preference count
-                            } else {
-                                container.append('<p>No buildings available</p>');
-                                $("#preference_count").val(0);
-                            }
-                        }
-                    });
-                } else {
-                    $("#preferences-container").empty();
-                    $("#preference_count").val(0);
-                }
-            });
-        });
-        
-    </script>
-    <div class="main-content">
-        <div class="card">
-            <h2>APPLICATION FORMS</h2>
-            <form action="" method="POST">
-                {% csrf_token %}
-                {% for message in messages %}
-                <p>{{ message }}</p>
-                {% endfor %}
-                <!-- Other form fields -->
-    
-                <div class="input-group">
-                    <label for="name">NAME</label>
-                    <input type="text" id="name" name="name" placeholder="Please enter your name" required>
-                </div>
-                <div class="input-group">
-                    <label for="staff_number">STAFF NUMBER</label>
-                    <input type="text" id="staff_number" name="staff_number" value="{{ request.POST.staff_number }}" required>
-                </div>
-                <div class="input-group">
-                    <label for="department">DEPARTMENT</label>
-                    <input type="text" id="department" name="department" placeholder="Please enter your department" required>
-                </div>
-                <div class="input-group">
-                    <label for="mobile_number">MOBILE NUMBER</label>
-                    <input type="number" id="mobile_number" name="mobile_number" placeholder="Please enter your mobile number" required>
-                </div>
-                <div class="input-group">
-                    <label for="uni_appointment">DATE OF UNIVERSITY APPOINTMENT</label>
-                    <input type="date" id="uni_appointment" name="uni_appointment" required>
-                </div>
-                <div class="input-group">
-                    <label for="bungalow_no">PRESENT UNIVERSITY BUNGALOW/FLAT NUMBER (if any)</label>
-                    <input type="text" id="bungalow_no" name="bungalow_no" placeholder="Please enter your present university bungalow or flat number">
-                </div>
-                <div class="input-group">
-                    <label for="present_accomodation">DATE OF OCCUPATION OF PRESENT UNIVERSITY ACCOMMODATION</label>
-                    <input type="date" id="present_accomodation" name="present_accomodation">
-                </div>
-                <div class="input-group">
-                    <label for="status_point">YOUR CURRENT STATUS</label>
-                    <input type="text" id="status_point" name="status_point" placeholder="Please enter your current status e.g., Professor" required>
-                </div>
-                <div class="input-group">
-                    <label for="study_leaveFrom">DATE OF PROCEEDING ON STUDY LEAVE FROM:</label>
-                    <input type="date" id="study_leaveFrom" name="study_leaveFrom">
-                    <label for="study_leaveTo">DATE OF PROCEEDING ON STUDY LEAVE TO:</label>
-                    <input type="date" id="study_leaveTo" name="study_leaveTo">
-                </div>
-                <div class="">
-                    <label for="marital_status">MARITAL STATUS:</label><br>
-                    <input type="radio" id="married" name="marital_status" value="married">
-                    <label for="married">Married</label>
-            
-                    <input type="radio" id="single" name="marital_status" value="single">
-                    <label for="single">Single</label>
-            
-                    <input type="radio" id="none" name="marital_status" value="none">
-                    <label for="none">None</label>
-                </div><br>
-                <div class="input-group">
-                    <label for="num_of_children">NUMBER OF CHILDREN</label>
-                    <input type="number" id="num_of_children" name="num_of_children" placeholder="Please enter number of children" required>
-                </div>
-                <div class="">
-                    <label for="duty_status">DUTY STATUS:</label><br>
-                    <input type="radio" id="provert" name="duty_status" value="provert">
-                    <label for="provert">Provert</label>
-            
-                    <input type="radio" id="deans" name="duty_status" value="deans">
-                    <label for="deans">Deans</label>
-            
-                    <input type="radio" id="head_of_department" name="duty_status" value="head of department">
-                    <label for="head_of_department">Head of Department</label>
-                </div><br>
-                <div class="input-group">
-                    <label for="date_of_duty">DATE OF SPECIAL DUTY e.g., dean</label>
-                    <input type="date" id="date_of_duty" name="date_of_duty">
-                </div>
-
-                <!-- Preferences Section -->
-                <input type="hidden" id="preference_count" name="preference_count" value="0">
-    <div class="preferences-container" id="preferences-container">
-        <!-- Dynamic preference fields will be inserted here -->
-    </div>
-
-                <!-- New Section: Present Accommodation -->
-                <div class="accommodation">
-                    <label>PRESENT ACCOMMODATION:</label><br>
-                    <input type="radio" id="off_campus" name="present_accommodation_name" value="off_campus">
-                    <label for="off_campus">Off Campus</label><br>
-            
-                    <input type="radio" id="on_campus" name="present_accommodation_name" value="on_campus">
-                    <label for="on_campus">On Campus</label><br>
-            
-                    <input type="radio" id="temporary_accommodation" name="present_accommodation_name" value="temporary_accommodation">
+                        <input type="radio" id="on_campus" name="present_accommodation_name" value="on_campus">
+                        <label for="on_campus">On-Campus</label>    
+                        
+                        <input type="radio" id="temporary_accommodation" name="present_accommodation_name" value="temporary_accommodation">
                     <label for="temporary_accommodation">Temporary Accommodation</label><br>
                     
                     <input type="radio" id="not_accommodated" name="present_accommodation_name" value="not_accommodated">
                     <label for="not_accommodated">Not Accommodated</label>
+                    </div>
+        
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="marital-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="apartment-preferences-tab">Next</button>
                 </div>
 
-                <div class="input-group">
-                    <button type="submit">SUBMIT</button>
+                <!-- Section 6: Apartment Preferences -->
+                <div class="tab-pane fade" id="apartment-preferences">
+                    <h3>Section 6: Apartment Preferences</h3>
+                    <div class="form-group">
+                        <!-- Preferences Section -->
+                        <input type="hidden" id="preference_count" name="preference_count" value="0">
+                        <div class="preferences-container" id="preferences-container">
+                            <!-- Dynamic preference fields will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="present-accommodation-tab">Previous</button>
+                    <button class="btn btn-primary" type="submit">Submit</button>
                 </div>
-            </form>
-            <a href="{% url 'check_point' %}"><button>Check Point</button></a>
-        </div>
+            </div>
+        </form>
     </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.next-section').click(function(){
+                var nextTab = $(this).data('next');
+                $('#' + nextTab).tab('show');
+            });
+
+            $('.previous-section').click(function(){
+                var prevTab = $(this).data('previous');
+                $('#' + prevTab).tab('show');
+            });
+        });
+
+        
+    </script>
 </body>
 </html>
->>>>>>> master
