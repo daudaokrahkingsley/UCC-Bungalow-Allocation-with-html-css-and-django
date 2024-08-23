@@ -28,9 +28,9 @@ def admin_manage_buildings(request):
 
 
 def calculate_accommodation_points(present_accommodation, present_accommodation_date):
-    print(f"Present Accommodation: {present_accommodation}")
-    print(f"Present Accommodation Date: {present_accommodation_date}")
-    
+    if present_accommodation is None or present_accommodation_date is None:
+        return 0  # Skip calculation if either value is None
+
     present_date = datetime.strptime(present_accommodation_date, '%Y-%m-%d')
     current_date = datetime.now()
     months_of_stay = (current_date.year - present_date.year) * 12 + abs(current_date.month - present_date.month) + 1
@@ -45,6 +45,7 @@ def calculate_accommodation_points(present_accommodation, present_accommodation_
         return months_of_stay
     else:
         return 0
+
 
 
 def cal_marital_points(duty_status,marital_status,num_of_children,date_of_duty =None):
@@ -264,11 +265,13 @@ def index(request):
 def check_point(request):
     points = None
     marital_point = None
-    accomodation_points = None
+    accomodation_points = 0  # Initialize as 0
     total = 0
+    
     if request.method == 'POST':
         staff_number = request.POST.get('staff_number')
         print(f"Staff Number: {staff_number}")
+        
         try:
             appointment = Appointment.objects.get(staff_number=staff_number)
             appoint_id = appointment.id
@@ -292,13 +295,16 @@ def check_point(request):
             )
             print(f"Marital Points: {marital_point}")
 
-            accomodation_points = calculate_accommodation_points(
-                appointment.present_accommodation,
-                appointment.date_of_occupation_ofAccomodation.strftime('%Y-%m-%d') if appointment.date_of_occupation_ofAccomodation else None
-            )
-            print(f"Accommodation Points: {accomodation_points}")
+            if appointment.present_accommodation:  # Only calculate if present_accommodation is not None
+                accomodation_points = calculate_accommodation_points(
+                    appointment.present_accommodation,
+                    appointment.date_of_occupation_ofAccomodation.strftime('%Y-%m-%d') if appointment.date_of_occupation_ofAccomodation else None
+                )
+                print(f"Accommodation Points: {accomodation_points}")
 
-            total = int(points) + int(marital_point) + int(accomodation_points)
+                total = int(points) + int(marital_point) + int(accomodation_points)
+            else:
+                total = int(points) + int(marital_point)
             print(f"Total Points: {total}")
 
         except Appointment.DoesNotExist:
