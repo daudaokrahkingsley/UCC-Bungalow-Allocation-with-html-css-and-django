@@ -14,32 +14,33 @@ class Building(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.category}) - {self.vacant_rooms} rooms available"
+
 class Appointment(models.Model):
     name = models.CharField(max_length=100)
     staff_number = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     mobile_no = models.IntegerField()
-    dateOf_Uni_Appointment = models.DateField(default=date.today)  # Default date object
+    dateOf_Uni_Appointment = models.DateField(default=date.today)
     presentUni_bungalow = models.CharField(max_length=100)
-    date_of_occupation_ofAccomodation = models.DateField(null=True,blank=True)  # Default date object
+    date_of_occupation_ofAccomodation = models.DateField(null=True, blank=True)
     studyLeave_from = models.DateField(null=True, blank=True)
     studyLeave_to = models.DateField(null=True, blank=True)
     initial_point = models.IntegerField(default=0)
     marital_status_choices = [
-        ('single','Single'),
-        ('married','Married'),
-        ('none','None')
+        ('single', 'Single'),
+        ('married', 'Married'),
+        ('none', 'None')
     ]
-    marital_status = models.CharField(max_length=50,choices=marital_status_choices,default='Single')
+    marital_status = models.CharField(max_length=50, choices=marital_status_choices, default='Single')
     duty_status_choices = [
-        ('provert','Provert'),
-        ('deans','Deans'),
-        ('head of department','Head of Department')
+        ('provert', 'Provert'),
+        ('deans', 'Deans'),
+        ('head of department', 'Head of Department')
     ]
-    duty_status = models.CharField(max_length=50,choices=duty_status_choices,default='Provert')
+    duty_status = models.CharField(max_length=50, choices=duty_status_choices, default='Provert')
     num_of_children = models.IntegerField()
     date_of_duty = models.DateField(null=True, blank=True)
-    present_accommodation = models.CharField(max_length=50, choices=[('off_campus', 'Off Campus'), ('on_campus', 'On Campus'), ('temporary_accommodation', 'Temporary Accommodation'), ('not_accommodated', 'Not Accommodated')],default='Not Accomodated')
+    present_accommodation = models.CharField(max_length=50, choices=[('off_campus', 'Off Campus'), ('on_campus', 'On Campus'), ('temporary_accommodation', 'Temporary Accommodation'), ('not_accommodated', 'Not Accommodated')], default='Not Accomodated')
 
     def get_category(self):
         if self.staff_number.startswith('sm'):
@@ -49,16 +50,25 @@ class Appointment(models.Model):
         elif self.staff_number.startswith('js'):
             return 'junior_staff'
         return 'unknown'
+    
     def __str__(self):
         return self.name
+
 class Preference(models.Model):
-    application = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name='preferences')
-    preference = models.CharField(max_length=255,default='ff1')
+    application = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name='preference_set')
+    preference = models.CharField(max_length=255, default='ff1')
 
     def __str__(self):
         return f"Preferences for {self.application.name}"
-    
 
+class assign_point_and_preference(models.Model):
+    application = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name='assigned_point_and_preference_set')
+    preference_assigned = models.CharField(max_length=255, null=True, blank=True)
+    total_points = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"Assigned point and preference for {self.application.name}"
+    
 class status_point(models.Model):
     status_name = models.CharField(max_length=100)
     point = models.IntegerField()
