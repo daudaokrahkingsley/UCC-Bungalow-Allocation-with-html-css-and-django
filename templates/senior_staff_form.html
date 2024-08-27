@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCC Apartment Selection Form (Senior Staff)</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Navigation Sections -->
+        <ul class="nav nav-pills mb-4" id="form-sections">
+            <li class="nav-item">
+                <a class="nav-link active" id="welcome-tab" data-toggle="pill" href="#welcome">Welcome</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="personal-info-tab" data-toggle="pill" href="#personal-info">Personal Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="university-info-tab" data-toggle="pill" href="#university-info">University Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="marital-info-tab" data-toggle="pill" href="#marital-info">Marital Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="present-accommodation-tab" data-toggle="pill" href="#present-accommodation">Present Accommodation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="apartment-preferences-tab" data-toggle="pill" href="#apartment-preferences">Apartment Preferences</a>
+            </li>
+        </ul>
+
+        <!-- Form Sections (Single Form Tag) -->
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            
+            <div class="tab-content">
+                <!-- Welcome Section -->
+                <div class="tab-pane fade show active" id="welcome">
+                    <h3>Welcome to UCC Apartment Selection Forms</h3>
+                    <p>Please fill out the form diligently as it will be used to generate points for apartment allocation.</p>
+                    <button type="button" class="btn btn-primary next-section" data-next="personal-info-tab">Next</button>
+                </div>
+
+                <!-- Section 1: Personal Information -->
+                <div class="tab-pane fade" id="personal-info">
+                    <h3>Section 1: Personal Information</h3>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Please enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile_number">Mobile Number</label>
+                        <input type="number" id="mobile_number" name="mobile_number" class="form-control" placeholder="Please enter your mobile number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="num_of_children">Number of Children</label>
+                        <input type="number" id="num_of_children" name="num_of_children" class="form-control" placeholder="Please enter number of children" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="welcome-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="university-info-tab">Next</button>
+                </div>
+
+                <!-- Section 2: University Information -->
+                <div class="tab-pane fade" id="university-info">
+                    <h3>Section 2: University Information</h3>
+                    <div class="form-group">
+                        <label for="staff_number">Staff Number</label>
+                        <input type="text" id="staff_number" name="staff_number" class="form-control" value="{{ request.POST.staff_number }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <input type="text" id="department" name="department" class="form-control" placeholder="Please enter your department" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status_point">Your Current Status</label>
+                        <input type="text" id="status_point" name="status_point" class="form-control" placeholder="Please enter your current status e.g., Professor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="uni_appointment">Date of University Appointment</label>
+                        <input type="date" id="uni_appointment" name="uni_appointment" class="form-control" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="personal-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="duty-info-tab">Next</button>
+                </div>
+
+                
+                <!-- Section 3: Marital Information -->
+                <div class="tab-pane fade" id="marital-info">
+                    <h3>Section 3: Marital Information</h3>
+                    <div class="form-group">
+                        <label for="marital_status">Marital Status</label><br>
+                        <input type="radio" id="married" name="marital_status" value="married">
+                        <label for="married">Married</label>
+                
+                        <input type="radio" id="single" name="marital_status" value="single">
+                        <label for="single">Single</label>
+                
+                        <input type="radio" id="none" name="marital_status" value="none">
+                        <label for="none">None</label>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="duty-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="present-accommodation-tab">Next</button>
+                </div>
+
+                <!-- Section 4: Present Accommodation -->
+                <div class="tab-pane fade" id="present-accommodation">
+                    <h3>Section 4: Present Accommodation</h3>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="bungalow_no">Present University Bungalow/Flat Number (if any)</label>
+                            <input type="text" id="bungalow_no" name="bungalow_no" class="form-control" placeholder="Please enter your present university bungalow or flat number">
+                        </div>
+                        <div class="form-group">
+                            <label for="present_accomodation_date">Date of Occupation of Present University Accommodation</label>
+                            <input type="date" id="present_accomodation_date" name="present_accomodation_date" class="form-control">
+                        </div>
+                        <label>Present Accommodation:</label><br>
+
+                        <input type="radio" id="Senior staff university accommodation" name="present_accommodation_name" value="Senior staff university accommodation">
+                        <label for="Senior staff university accommodation">Senior staff university accommodation</label>
+                        
+                        <input type="radio" id="Junior staff bungalow" name="present_accommodation_name" value="Junior staff bungalow">
+                        <label for="Junior staff bungalow">Junior staff bungalow</label>    
+                    
+                    <input type="radio" id="not_accommodated" name="present_accommodation_name" value="not_accommodated">
+                    <label for="not_accommodated">Not Accommodated</label>
+                    </div>
+        
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="marital-info-tab">Previous</button>
+                    <button type="button" class="btn btn-primary next-section" data-next="apartment-preferences-tab">Next</button>
+                </div>
+
+                <!-- Section 6: Apartment Preferences -->
+                <div class="tab-pane fade" id="apartment-preferences">
+                    <h3>Section 6: Apartment Preferences</h3>
+                    <div class="form-group">
+                        <!-- Preferences Section -->
+                        <input type="hidden" id="preference_count" name="preference_count" value="0">
+                        <div class="preferences-container" id="preferences-container">
+                            <!-- Dynamic preference fields will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary previous-section" data-previous="present-accommodation-tab">Previous</button>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script>
+       
+    </script>
+</body>
+</html>
