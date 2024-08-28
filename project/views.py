@@ -262,18 +262,25 @@ def index(request):
 
 #senior staff appointment and calculation
 #senior staff calculation functions
-def calculate_service_points_seniorstaff(dateOf_Uni_Appointment):
+def calculate_service_points_seniorstaff(designation_point, dateOf_Uni_Appointment):
     try:
+        total_points = 0
+
+        # Calculate points based on months in service
         appointment_date = datetime.strptime(dateOf_Uni_Appointment, '%Y-%m-%d')
         current_date = datetime.now()
-        years_of_service = (current_date.year - appointment_date.year)
-
+        months_in_service = (current_date.year - appointment_date.year) * 12 + abs(current_date.month - appointment_date.month)
+        
         # 2 points for each year of service
-        service_points = years_of_service * 2
-        return service_points
+        total_points = months_in_service * 2
 
+        
+
+        return total_points + designation_point
+    
     except ValueError:
         raise ValueError('Invalid date format. Please use YYYY-MM-DD.')
+
 
 def calculate_present_accommodation_points_seniorstaff(present_accommodation, date_of_occupation_of_accommodation):
     try:
@@ -402,8 +409,11 @@ def check_point(request):
     for staff_appointment in all_senior_staff_appointments:
         try:
             points = calculate_service_points_seniorstaff(
+                staff_appointment.designation_point,
                 staff_appointment.dateOf_Uni_Appointment.strftime('%Y-%m-%d')
             )
+            print(staff_appointment.designation_point)
+            print(designation_point)
             marital_point = cal_marital_points_seniorstaff(
                 staff_appointment.marital_status,
                 staff_appointment.num_of_children
